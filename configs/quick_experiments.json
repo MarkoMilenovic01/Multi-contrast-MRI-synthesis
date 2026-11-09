@@ -1,0 +1,17 @@
+{
+  "data": "data/quick",
+  "width": 32,
+  "blocks": 9,
+  "constant": 10,
+  "decay": 10,
+  "max_minutes_per_experiment": 22,
+  "suite_minutes": 150,
+  "experiments": [
+    {"name": "pgan1", "model": "pgan", "branch": "registered", "slices": 1},
+    {"name": "pgan3", "model": "pgan", "branch": "registered", "slices": 3},
+    {"name": "cgan_reg1", "model": "cgan", "branch": "registered", "slices": 1},
+    {"name": "cgan_reg3", "model": "cgan", "branch": "registered", "slices": 3},
+    {"name": "cgan_unreg1", "model": "cgan", "branch": "unregistered", "slices": 1},
+    {"name": "cgan_unreg3", "model": "cgan", "branch": "unregistered", "slices": 3}
+  ]
+}

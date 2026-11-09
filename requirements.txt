@@ -1,0 +1,8 @@
+torch>=2.6,<3
+torchvision>=0.21,<1
+numpy>=1.26,<3
+nibabel>=5.2,<6
+SimpleITK>=2.3,<3
+scikit-image>=0.23,<1
+matplotlib>=3.8,<4
+mlflow>=3,<4
