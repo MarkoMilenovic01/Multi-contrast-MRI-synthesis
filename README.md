@@ -10,9 +10,48 @@ Implementation of section 8.3.1 of *Deep Learning for Medical Image Analysis*, s
 
 Quick data: **20/4/4 subjects**, **400/80/80 selected examples** for training/validation/test, **128x128** inputs. Networks use width 32 and nine residual blocks. The model families and losses follow the book; dataset size, resolution, model width, and training duration are reduced for this educational project.
 
+## Held-out test examples
+
+These are actual predictions from the six trained quick models, using subjects excluded from training and validation. Each figure shows **input T1, six synthetic T2 predictions, and the real, registered T2 reference**. The examples are the middle selected slices of the first two test subjects, rather than slices chosen by prediction quality.
+
+**IXI236, axial slice 131**
+
+![IXI236: input T1, predictions from all six GAN configurations, and real T2](docs/assets/ixi236_slice_131.png)
+
+**IXI186, axial slice 157**
+
+![IXI186: input T1, predictions from all six GAN configurations, and real T2](docs/assets/ixi186_slice_157.png)
+
+### How the predictions were generated
+
+1. Normalize each MRI volume, resize/pad axial slices to **128 x 128**, and map model inputs to **[-1, 1]**.
+2. Give the trained generator either one T1 slice or three adjacent T1 slices. The generator predicts the **central T2 slice**. No real T2 image is supplied to the generator at inference.
+3. Run inference with the final checkpoint in evaluation mode, then display the prediction in **[0, 1]**. Every panel uses the same grayscale limits; the real T2 is shown only as a reference.
+
+The models trained on **400 selected examples from 20 subjects**, for **20 epochs**, with width-32, nine-residual-block generators. Paired pGAN learns from adversarial, L1, and perceptual losses; the cycle-consistent cGAN variants use adversarial and cycle losses. Registered/unregistered describes the training data, while all quantitative comparisons use aligned held-out references.
+
+In these examples, pGAN preserves more of the reference contrast and detail. The three-slice unregistered cGAN produced severe artifacts and poor fidelity in this run; its output is deliberately included. These are small-data educational results, not a reproduction of the book's published scores or evidence of clinical reliability.
+
+### Test-set scores
+
+Scores below cover **all 80 selected slices from four held-out subjects**, not just the displayed images. Metrics are averaged within subjects, then equally across subjects; padding/background are included. Lower MAE and higher PSNR/SSIM indicate closer agreement.
+
+| Model | MAE (lower) | PSNR, dB (higher) | SSIM (higher) |
+|---|---:|---:|---:|
+| pGAN, 1 slice | 0.0239 | 24.94 | 0.9055 |
+| pGAN, 3 slices | 0.0237 | 25.03 | 0.9079 |
+| cGAN registered, 1 slice | 0.0466 | 18.78 | 0.6956 |
+| cGAN registered, 3 slices | 0.0486 | 18.60 | 0.6717 |
+| cGAN unregistered, 1 slice | 0.0792 | 15.93 | 0.3852 |
+| cGAN unregistered, 3 slices | 0.2824 | 10.00 | -0.0244 |
+
+[Full metric snapshot, including subject-level standard deviations](docs/assets/test_metrics.csv). Reproduce evaluation with `python test_models.py --device cuda`; regenerate all examples with `python visualize_all.py --device cuda` after supplying the excluded data and final checkpoints.
+
+**Image attribution:** Adapted from the [IXI Dataset](https://brain-development.org/ixi-dataset/) (Information eXtraction from Images, EPSRC GR/S21533/02), available under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Figures contain normalized/resampled source and reference images plus model-generated predictions and labels. These adapted example figures are shared under the same license; see [asset details](docs/assets/README.md). The figures and metric snapshot are intentionally included in Git; bulk datasets, checkpoints, galleries, and tracking files remain excluded.
+
 ## Setup from GitHub
 
-The repository contains source code, configuration, tests, and documentation. MRI scans, prepared arrays, trained weights, generated images, and the local MLflow database are excluded by `.gitignore`. Completed models/results described below refer to the local project, not files bundled with a fresh clone.
+The repository contains source code, configuration, tests, and documentation. Bulk MRI scans, prepared arrays, trained weights, generated galleries, and the local MLflow database are excluded by `.gitignore`. Only the curated README figures and metric snapshot under `docs/assets/` are included. Completed models/results described below refer to the local project, not files bundled with a fresh clone.
 
 Use Python 3.11 or 3.12. From the cloned repository:
 

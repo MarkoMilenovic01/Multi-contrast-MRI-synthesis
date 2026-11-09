@@ -1,0 +1,15 @@
+{
+  "selection": "Middle selected slice of each of the first two held-out test subjects; no ranking by model quality",
+  "examples": [
+    {
+      "subject": "IXI236",
+      "slice": 131,
+      "image": "docs/assets/ixi236_slice_131.png"
+    },
+    {
+      "subject": "IXI186",
+      "slice": 157,
+      "image": "docs/assets/ixi186_slice_157.png"
+    }
+  ]
+}
